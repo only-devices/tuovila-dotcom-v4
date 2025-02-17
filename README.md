@@ -1,0 +1,1 @@
+Going Next.js, because AI told me to.
