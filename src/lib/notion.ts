@@ -30,9 +30,6 @@ export async function getAllPosts() {
     ]
   });
 
-  console.log('Database response:', JSON.stringify(response, null, 2));
-  console.log('Number of posts found:', response.results.length);
-
   // Fetch blocks for each post
   const postsWithBlocks = await Promise.all(
     response.results.map(async (post) => {

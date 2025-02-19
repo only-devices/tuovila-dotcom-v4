@@ -24,9 +24,9 @@ const Tuovila = () => {
     "Have a great day! 😊",
     "What do you want to do next? 🤔",
     "Thanks for stopping by! 👋",
-    "Coffee? Tea? Code? ☕",
-    "Feel free to explore! 🚀",
-    "Plot twist: this is actually a cooking blog... just kidding! 😄"
+    "I got nothing 🤷‍♂️",
+    "Feel free to explore! 🔎",
+    "Welcome to the best cooking blog on the internet, lol could you imagine"
   ], []);
 
   useEffect(() => {
@@ -71,7 +71,9 @@ const Tuovila = () => {
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
             >
-              <Image src='/images/icon-192x192.png' alt='eric tuovila' height='32' width='32' />
+              <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center">
+                <Image src='/images/icon-192x192.png' alt='eric tuovila' height='32' width='32' />
+              </div>
             </motion.a>
           </div>
 
@@ -144,31 +146,31 @@ const Tuovila = () => {
                         icon: FaLinkedin, 
                         href: 'https://www.linkedin.com/in/etuovila', 
                         alt: 'LinkedIn',
-                        description: 'View my professional experience and connections on LinkedIn'
+                        description: 'View my professional experience and connections on LinkedIn 🤝'
                       },
                       { 
                         icon: FaGithub, 
                         href: 'https://www.github.com/only-devices', 
                         alt: 'GitHub',
-                        description: 'Check out my code and projects on GitHub'
+                        description: 'Check out my code and projects on GitHub 🤓'
                       },
                       { 
                         icon: FaSoundcloud, 
                         href: 'https://www.soundcloud.com/only_devices', 
                         alt: 'Soundcloud',
-                        description: 'Listen to my music on SoundCloud'
+                        description: 'Listen to my "music" on Soundcloud 🤘'
                       },
                       { 
                         icon: FaLastfm, 
                         href: 'https://www.last.fm/user/only-devices', 
                         alt: 'Last.FM',
-                        description: 'See what I\'ve been listening to on Last.FM'
+                        description: 'I switch streaming platforms a lot, but track everything in Last.FM 🎧'
                       },
                       { 
                         icon: FaBook, 
                         href: 'https://hardcover.app/@onlydevices', 
                         alt: 'Hardcover',
-                        description: 'Check out what I\'ve been reading on Hardcover'
+                        description: 'You didn\'t know I can read'
                       }
                     ].map(({ icon: Icon, href, description: hoverDescription }) => (
                       <motion.a

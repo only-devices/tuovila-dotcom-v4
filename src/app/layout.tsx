@@ -15,6 +15,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Eric Tuovila",
   description: "Eric Tuovila's homepage",
+  icons: {
+    icon: '/images/icon-192x192.png',
+    shortcut: '/images/icon-192x192.png',
+    apple: '/images/icon-192x192.png',
+  },
 };
 
 export default function RootLayout({

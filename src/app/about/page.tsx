@@ -62,7 +62,9 @@ export default function AboutPage() {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Image src='/images/icon-192x192.png' alt='eric tuovila' height='32' width='32' />
+                <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center">
+                  <Image src='/images/icon-192x192.png' alt='eric tuovila' height='32' width='32' />
+                </div>
               </motion.div>
             </Link>
           </div>

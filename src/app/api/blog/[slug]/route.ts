@@ -1,36 +1,26 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getPost } from '@/lib/notion';
-import { PageObjectResponse } from '@notionhq/client/build/src/api-endpoints';
+import { formatDate } from '@/utils/notion';
+import { NotionPost } from '@/types/notion';
 
 export const revalidate = 60; // Revalidate every minute
 
-interface NotionProperties {
-  Title: {
-    title: Array<{
-      plain_text: string;
-    }>;
-  };
-  Date: {
-    date: {
-      start: string;
-    };
-  };
-}
-
 export async function GET(
-  request: Request,
-  { params }: { params: { slug: string } }
+  request: NextRequest,
+  context: { params: { slug: string } }
 ) {
   try {
-    console.log('Fetching post with slug:', params.slug);
-    const { post, blocks } = await getPost(params.slug);
-    console.log('Raw post data:', JSON.stringify(post, null, 2));
+    const slug = context.params.slug;
+    
+    if (!slug) {
+      return NextResponse.json({ error: 'Slug parameter is required' }, { status: 400 });
+    }
 
-    const typedPost = post as PageObjectResponse & { properties: NotionProperties };
+    const { post, blocks } = await getPost(slug);
+    const typedPost = post as NotionPost;
     
     // Convert Notion blocks to markdown
     const content = blocks.map(block => {
-      // For now, just return text content
       if ('paragraph' in block) {
         return block.paragraph.rich_text.map(text => text.plain_text).join('');
       }
@@ -43,16 +33,9 @@ export async function GET(
       content,
     };
 
-    console.log('Formatted post:', formattedPost);
-
     // Format the date
-    formattedPost.date = new Date(formattedPost.date).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
+    formattedPost.date = formatDate(formattedPost.date);
 
-    console.log('Final formatted post:', formattedPost);
     return NextResponse.json({ post: formattedPost });
   } catch (error) {
     console.error('Error fetching blog post:', error);

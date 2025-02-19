@@ -1,16 +1,23 @@
 'use client'
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
 import { CiLight, CiDark } from 'react-icons/ci';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 interface BlogPost {
   title: string;
   excerpt: string;
   date: string;
   slug: string;
+}
+
+interface BlogPostDetail {
+  title: string;
+  date: string;
+  content: string;
 }
 
 export default function BlogPage() {
@@ -20,7 +27,8 @@ export default function BlogPage() {
   const [showContent, setShowContent] = useState(false);
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const fullText = "Welcome to my blog!";
+  const [preloadedPosts, setPreloadedPosts] = useState<Record<string, BlogPostDetail>>({});
+  const fullText = "Observations, ramblings, and musings incoming!";
 
   const fetchPosts = async () => {
     try {
@@ -37,6 +45,23 @@ export default function BlogPage() {
       setIsLoading(false);
     }
   };
+
+  const preloadPost = useCallback(async (slug: string) => {
+    if (preloadedPosts[slug]) return;
+
+    try {
+      const response = await fetch(`/api/blog/${slug}`);
+      if (!response.ok) return;
+      
+      const data = await response.json();
+      setPreloadedPosts(prev => ({
+        ...prev,
+        [slug]: data.post
+      }));
+    } catch (error) {
+      console.error('Error preloading post:', error);
+    }
+  }, [preloadedPosts]);
 
   useEffect(() => {
     fetchPosts();
@@ -84,7 +109,9 @@ export default function BlogPage() {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Image src='/images/icon-192x192.png' alt='eric tuovila' height='32' width='32' />
+                <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center">
+                  <Image src='/images/icon-192x192.png' alt='eric tuovila' height='32' width='32' />
+                </div>
               </motion.div>
             </Link>
           </div>
@@ -146,7 +173,10 @@ export default function BlogPage() {
                 transition={{ duration: 0.5 }}
               >
                 {isLoading ? (
-                  <div className="text-center py-8">Loading posts...</div>
+                  <div className="flex flex-col items-center justify-center py-16">
+                    <LoadingSpinner size={48} />
+                    <p className="mt-4 text-gray-600 dark:text-gray-400">Loading posts...</p>
+                  </div>
                 ) : posts.length === 0 ? (
                   <div className="text-center py-8">
                     <p className="text-lg text-gray-600 dark:text-gray-400">
@@ -159,15 +189,16 @@ export default function BlogPage() {
                       <motion.article
                         key={post.slug}
                         className={`p-6 rounded-lg ${
-                          isDark ? 'bg-slate-800 hover:bg-slate-700' : 'bg-white hover:bg-gray-50'
+                          isDark ? 'bg-slate-800/80 hover:bg-slate-700/80' : 'bg-white hover:bg-gray-50'
                         } transition-colors shadow-lg`}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
+                        onHoverStart={() => preloadPost(post.slug)}
                       >
                         <Link href={`/blog/${post.slug}`}>
-                          <h3 className="text-2xl font-semibold mb-2">{post.title}</h3>
-                          <p className="text-gray-800 dark:text-gray-200 mb-4">{post.excerpt}</p>
-                          <p className="text-sm text-gray-500 dark:text-gray-500">{post.date}</p>
+                          <h3 className="text-2xl font-bold mb-2">{post.title}</h3>
+                          <p className="text-gray-700 dark:text-gray-100 mb-4">{post.excerpt}</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-300">{post.date}</p>
                         </Link>
                       </motion.article>
                     ))}

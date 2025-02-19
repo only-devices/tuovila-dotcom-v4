@@ -8,6 +8,7 @@ import { CiLight, CiDark } from 'react-icons/ci';
 import ReactMarkdown from 'react-markdown';
 import { Quicksand } from 'next/font/google';
 import { useParams } from 'next/navigation';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 const quicksand = Quicksand({ 
   subsets: ['latin'],
@@ -30,30 +31,24 @@ export default function BlogPostPage() {
 
   const fetchPost = useCallback(async () => {
     try {
-      console.log('Fetching post for slug:', slug);
       setIsLoading(true);
       setError(null);
       setPost(null);
 
       const response = await fetch(`/api/blog/${slug}`);
-      console.log('Response status:', response.status);
       
       if (!response.ok) {
         const errorData = await response.json();
-        console.error('Error response:', errorData);
         throw new Error(errorData.error || 'Failed to fetch post');
       }
 
       const data = await response.json();
-      console.log('Received post data:', data);
       
       if (!data.post) {
-        console.error('No post data in response:', data);
         throw new Error('Post data not found in response');
       }
 
       if (!data.post.content) {
-        console.error('No content in post data:', data.post);
         throw new Error('Post content not found');
       }
 
@@ -101,7 +96,9 @@ export default function BlogPostPage() {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Image src='/images/icon-192x192.png' alt='eric tuovila' height='32' width='32' />
+                <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center">
+                  <Image src='/images/icon-192x192.png' alt='eric tuovila' height='32' width='32' />
+                </div>
               </motion.div>
             </Link>
           </div>
@@ -149,7 +146,10 @@ export default function BlogPostPage() {
               animate={{ opacity: 1, y: 0 }}
             >
               {isLoading ? (
-                <div className="text-center py-8">Loading post...</div>
+                <div className="flex flex-col items-center justify-center py-16">
+                  <LoadingSpinner size={48} />
+                  <p className="mt-4 text-gray-600 dark:text-gray-400">Loading post...</p>
+                </div>
               ) : error ? (
                 <div className="text-center py-8 text-red-500">
                   <p>Error: {error}</p>
@@ -167,10 +167,26 @@ export default function BlogPostPage() {
               ) : post ? (
                 <>
                   <h1 className="text-5xl font-bold mb-4">{post.title}</h1>
-                  <p className={`text-gray-700 dark:text-gray-300 mb-8 ${quicksand.className}`}>
+                  <p className={`text-gray-700 dark:text-gray-100 mb-8 ${quicksand.className}`}>
                     {post.date}
                   </p>
-                  <div className={`prose dark:prose-invert prose-gray dark:prose-gray max-w-none ${quicksand.className}`}>
+                  <div className={`prose dark:prose-invert prose-slate max-w-none ${quicksand.className} 
+                    prose-p:text-gray-700 prose-p:dark:text-gray-100
+                    prose-headings:text-slate-900 prose-headings:dark:text-gray-100
+                    prose-strong:text-gray-700 prose-strong:dark:text-gray-100
+                    prose-em:text-gray-700 prose-em:dark:text-gray-100
+                    prose-li:text-gray-700 prose-li:dark:text-gray-100
+                    prose-code:text-gray-700 prose-code:dark:text-gray-100
+                    prose-blockquote:text-gray-700 prose-blockquote:dark:text-gray-100
+                    prose-a:text-blue-600 prose-a:dark:text-blue-300
+                    hover:prose-a:text-blue-500 hover:prose-a:dark:text-blue-200
+                    prose-pre:dark:bg-slate-800/80
+                    prose-pre:text-gray-700 prose-pre:dark:text-gray-100
+                    prose-code:bg-gray-100 prose-code:dark:bg-slate-800/50
+                    prose-blockquote:border-gray-300 prose-blockquote:dark:border-gray-600
+                    prose-hr:border-gray-300 prose-hr:dark:border-gray-600
+                    prose-th:text-gray-700 prose-th:dark:text-gray-100
+                    prose-td:text-gray-700 prose-td:dark:text-gray-100`}>
                     <ReactMarkdown>{post.content}</ReactMarkdown>
                   </div>
                 </>
