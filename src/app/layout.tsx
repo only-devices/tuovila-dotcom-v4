@@ -16,9 +16,10 @@ export const metadata: Metadata = {
   title: "Eric Tuovila",
   description: "Eric Tuovila's homepage",
   icons: {
-    icon: '/images/icon-192x192.png',
-    shortcut: '/images/icon-192x192.png',
-    apple: '/images/icon-192x192.png',
+    icon: [
+      { url: '/images/icon-192x192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/images/favicon.ico', sizes: '32x32 16x16', type: 'image/x-icon' },
+    ],
   },
 };
 
@@ -29,6 +30,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" type="image/x-icon" href="/images/favicon.ico" sizes="32x32" />
+        <link rel="icon" type="image/png" href="/images/icon-192x192.png" sizes="192x192" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

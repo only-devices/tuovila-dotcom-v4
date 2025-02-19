@@ -10,7 +10,7 @@ export async function GET(
   context: { params: { slug: string } }
 ) {
   try {
-    const slug = context.params.slug;
+    const { slug } = await Promise.resolve(context.params);
     
     if (!slug) {
       return NextResponse.json({ error: 'Slug parameter is required' }, { status: 400 });
