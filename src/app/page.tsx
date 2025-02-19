@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaGithub, FaLinkedin, FaSoundcloud, FaBook } from 'react-icons/fa';
+import { FaGithub, FaLinkedin, FaSoundcloud, FaBook, FaLastfm } from 'react-icons/fa';
 import { CiLight, CiDark } from 'react-icons/ci';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -13,7 +13,8 @@ const quicksand = Quicksand({
 });
 
 const Tuovila = () => {
-  const [isDark, setIsDark] = useState(true);
+  const [isDark, setIsDark] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const [typewriterText, setTypewriterText] = useState('');
   const [showSocials, setShowSocials] = useState(false);
   const [description, setDescription] = useState('');
@@ -27,6 +28,18 @@ const Tuovila = () => {
     "Feel free to explore! 🚀",
     "Plot twist: this is actually a cooking blog... just kidding! 😄"
   ], []);
+
+  useEffect(() => {
+    const darkMode = localStorage.getItem('darkMode');
+    setIsDark(darkMode === 'true');
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (mounted) {
+      localStorage.setItem('darkMode', isDark.toString());
+    }
+  }, [isDark, mounted]);
 
   useEffect(() => {
     let i = 0;
@@ -44,18 +57,9 @@ const Tuovila = () => {
     return () => clearInterval(typewriter);
   }, [randomMessages]);
 
-  useEffect(() => {
-    if (!showSocials) return;
-    
-    const interval = setInterval(() => {
-      setDescription(randomMessages[Math.floor(Math.random() * randomMessages.length)]);
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [showSocials, randomMessages]);
-
   return (
     <div className={`min-h-screen transition-colors duration-300 font-sans ${
+      !mounted ? 'invisible' : 'visible'} ${
       isDark ? 'bg-gradient-to-br from-slate-900 to-slate-800 text-white' : 
       'bg-gradient-to-br from-slate-100 to-white text-slate-900'
     }`}>
@@ -73,18 +77,22 @@ const Tuovila = () => {
 
           <div className="flex items-center gap-6">
             {[
+              { name: 'home', path: '/' },
               { name: 'about', path: '/about' },
               { name: 'listens', path: '/listens' },
-              { name: 'contact', path: '/contact' }
+              { name: 'reads', path: '/reads' },
+              { name: 'blog', path: '/blog' }
             ].map(({ name, path }) => (
               <Link key={path} href={path} passHref>
-                <motion.a
-                  className="relative hover:text-blue-400 transition-colors"
+                <motion.div
+                  className={`relative hover:text-blue-400 transition-colors ${
+                    path === '/' ? 'text-blue-400' : ''
+                  }`}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
                 >
                   {name}
-                </motion.a>
+                </motion.div>
               </Link>
             ))}
             <motion.button
@@ -117,6 +125,7 @@ const Tuovila = () => {
                 className={`text-xl mt-4 h-8 ${quicksand.className} font-light tracking-wide opacity-85`}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
+                transition={{ duration: 1 }}
                 key={description}
               >
                 {description}
@@ -150,6 +159,12 @@ const Tuovila = () => {
                         description: 'Listen to my music on SoundCloud'
                       },
                       { 
+                        icon: FaLastfm, 
+                        href: 'https://www.last.fm/user/only-devices', 
+                        alt: 'Last.FM',
+                        description: 'See what I\'ve been listening to on Last.FM'
+                      },
+                      { 
                         icon: FaBook, 
                         href: 'https://hardcover.app/@onlydevices', 
                         alt: 'Hardcover',
@@ -167,7 +182,15 @@ const Tuovila = () => {
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         onMouseEnter={() => setDescription(hoverDescription)}
-                        onMouseLeave={() => setDescription(randomMessages[Math.floor(Math.random() * randomMessages.length)])}
+                        onMouseLeave={() => {
+                          const newMessage = randomMessages[Math.floor(Math.random() * randomMessages.length)];
+                          if (newMessage !== description) {
+                            setDescription(newMessage);
+                          } else {
+                            const remainingMessages = randomMessages.filter(msg => msg !== description);
+                            setDescription(remainingMessages[Math.floor(Math.random() * remainingMessages.length)]);
+                          }
+                        }}
                       >
                         <Icon size={24} />
                       </motion.a>

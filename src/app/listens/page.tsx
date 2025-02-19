@@ -8,9 +8,23 @@ import Image from 'next/image';
 import { CiLight, CiDark } from 'react-icons/ci';
 
 export default function ListensPage() {
-  const [isDark, setIsDark] = useState(true);
+  const [isDark, setIsDark] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const [typewriterText, setTypewriterText] = useState('');
+  const [showWidget, setShowWidget] = useState(false);
   const fullText = "Here's what I've been listening to lately:";
+
+  useEffect(() => {
+    const darkMode = localStorage.getItem('darkMode');
+    setIsDark(darkMode === 'true');
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (mounted) {
+      localStorage.setItem('darkMode', isDark.toString());
+    }
+  }, [isDark, mounted]);
 
   useEffect(() => {
     let i = 0;
@@ -20,6 +34,7 @@ export default function ListensPage() {
         i++;
       } else {
         clearInterval(typewriter);
+        setShowWidget(true);
       }
     }, 50);
     
@@ -28,6 +43,7 @@ export default function ListensPage() {
 
   return (
     <div className={`min-h-screen transition-colors duration-300 font-sans ${
+      !mounted ? 'invisible' : 'visible'} ${
       isDark ? 'bg-gradient-to-br from-slate-900 to-slate-800 text-white' : 
       'bg-gradient-to-br from-slate-100 to-white text-slate-900'
     }`}>
@@ -47,9 +63,11 @@ export default function ListensPage() {
 
           <div className="flex items-center gap-6">
             {[
+              { name: 'home', path: '/' },
               { name: 'about', path: '/about' },
               { name: 'listens', path: '/listens' },
-              { name: 'contact', path: '/contact' }
+              { name: 'reads', path: '/reads' },
+              { name: 'blog', path: '/blog' }
             ].map(({ name, path }) => (
               <motion.div
                 key={path}
@@ -92,9 +110,14 @@ export default function ListensPage() {
                   transition={{ duration: 0.8, repeat: Infinity }}
                 >|</motion.span>
               </h2>
-              <div className="mt-12">
+              <motion.div 
+                className="mt-12"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: showWidget ? 1 : 0 }}
+                transition={{ duration: 0.5 }}
+              >
                 <LastFmWidget />
-              </div>
+              </motion.div>
             </motion.div>
           </div>
         </main>

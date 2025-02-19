@@ -5,20 +5,42 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
 import { CiLight, CiDark } from 'react-icons/ci';
-import { FaGithub, FaLinkedin, FaSoundcloud, FaBook, FaLastfm } from 'react-icons/fa';
-import { Quicksand } from 'next/font/google';
 
-const quicksand = Quicksand({ 
-  subsets: ['latin'],
-});
+interface BlogPost {
+  title: string;
+  excerpt: string;
+  date: string;
+  slug: string;
+}
 
-export default function AboutPage() {
+export default function BlogPage() {
   const [isDark, setIsDark] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [typewriterText, setTypewriterText] = useState('');
   const [showContent, setShowContent] = useState(false);
-  const fullText = "Hey again! 👋";
-  const content = "I'm a full-time husband and dad who spends his days working in the SaaS world of Support, Implementation, and Customer Success. I'm passionate about finding creative solutions and better ways to work. In my free time I'm maintaining my home and vehicles, exploring things I can self-host with Docker, and playing with Legos or a guitar. I've also been known to dabble in karaoke.";
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const fullText = "Welcome to my blog!";
+
+  const fetchPosts = async () => {
+    try {
+      const response = await fetch('/api/blog');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to fetch posts');
+      }
+      const data = await response.json();
+      setPosts(data.posts);
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPosts();
+  }, []);
 
   useEffect(() => {
     const darkMode = localStorage.getItem('darkMode');
@@ -84,7 +106,7 @@ export default function AboutPage() {
                 <Link
                   href={path}
                   className={`hover:text-blue-400 transition-colors ${
-                    path === '/about' ? 'text-blue-400' : ''
+                    path === '/blog' ? 'text-blue-400' : ''
                   }`}
                 >
                   {name}
@@ -116,58 +138,41 @@ export default function AboutPage() {
                   transition={{ duration: 0.8, repeat: Infinity }}
                 >|</motion.span>
               </h2>
-              
-              <motion.p
-                className={`text-xl mt-4 ${quicksand.className} font-light tracking-wide opacity-85`}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: showContent ? 1 : 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                {content}
-              </motion.p>
 
               <motion.div 
-                className="flex gap-4 mt-12"
+                className="mt-12"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: showContent ? 1 : 0 }}
                 transition={{ duration: 0.5 }}
               >
-                {[
-                  { 
-                    icon: FaLinkedin, 
-                    href: 'https://www.linkedin.com/in/etuovila'
-                  },
-                  { 
-                    icon: FaGithub, 
-                    href: 'https://www.github.com/only-devices'
-                  },
-                  { 
-                    icon: FaSoundcloud, 
-                    href: 'https://www.soundcloud.com/only_devices'
-                  },
-                  { 
-                    icon: FaLastfm, 
-                    href: 'https://www.last.fm/user/only-devices'
-                  },
-                  { 
-                    icon: FaBook, 
-                    href: 'https://hardcover.app/@onlydevices'
-                  }
-                ].map(({ icon: Icon, href }) => (
-                  <motion.a
-                    key={href}
-                    href={href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`p-4 rounded-lg flex items-center gap-3 ${
-                      isDark ? 'bg-slate-800 hover:bg-slate-700' : 'bg-slate-100 hover:bg-slate-200'
-                    } transition-colors`}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <Icon size={24} />
-                  </motion.a>
-                ))}
+                {isLoading ? (
+                  <div className="text-center py-8">Loading posts...</div>
+                ) : posts.length === 0 ? (
+                  <div className="text-center py-8">
+                    <p className="text-lg text-gray-600 dark:text-gray-400">
+                      No blog posts yet. Check back soon!
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-8">
+                    {posts.map((post) => (
+                      <motion.article
+                        key={post.slug}
+                        className={`p-6 rounded-lg ${
+                          isDark ? 'bg-slate-800 hover:bg-slate-700' : 'bg-white hover:bg-gray-50'
+                        } transition-colors shadow-lg`}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        <Link href={`/blog/${post.slug}`}>
+                          <h3 className="text-2xl font-semibold mb-2">{post.title}</h3>
+                          <p className="text-gray-800 dark:text-gray-200 mb-4">{post.excerpt}</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-500">{post.date}</p>
+                        </Link>
+                      </motion.article>
+                    ))}
+                  </div>
+                )}
               </motion.div>
             </motion.div>
           </div>
@@ -175,4 +180,4 @@ export default function AboutPage() {
       </div>
     </div>
   );
-} 
+}

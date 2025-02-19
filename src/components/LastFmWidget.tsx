@@ -53,7 +53,7 @@ const LastFmWidget: React.FC = () => {
         </div>
 
         {/* Playlist */}
-        <div className="h-[400px] overflow-y-auto scrollbar bg-white">
+        <div className="h-[600px] overflow-y-auto scrollbar bg-white">
           {isLoading ? (
             <div className="font-mono text-sm p-4 text-gray-600">Loading tracks...</div>
           ) : (
