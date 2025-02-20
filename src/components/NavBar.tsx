@@ -21,7 +21,13 @@ const NavBar: React.FC<NavBarProps> = ({ currentPath, isDark, setIsDark }) => {
             whileTap={{ scale: 0.95 }}
           >
             <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center">
-              <Image src='/images/icon-192x192.png' alt='eric tuovila' height='32' width='32' />
+              <Image 
+                src='/images/icon-192x192.png' 
+                alt='eric tuovila' 
+                height='32' 
+                width='32'
+                priority={true}
+              />
             </div>
           </motion.div>
         </Link>
@@ -33,6 +39,7 @@ const NavBar: React.FC<NavBarProps> = ({ currentPath, isDark, setIsDark }) => {
           { name: 'about', path: '/about' },
           { name: 'listens', path: '/listens' },
           { name: 'reads', path: '/reads' },
+          { name: 'unquotes', path: '/unquotes' },
           { name: 'blog', path: '/blog' }
         ].map(({ name, path }) => (
           <motion.div

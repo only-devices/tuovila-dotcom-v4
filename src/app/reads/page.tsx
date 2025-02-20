@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import Link from 'next/link';
 import Image from 'next/image';
-import { CiLight, CiDark } from 'react-icons/ci';
+import { usePathname } from 'next/navigation';
+import PageLayout from '@/components/PageLayout';
 
 interface Book {
   title: string;
@@ -16,14 +16,13 @@ interface Book {
 }
 
 export default function ReadsPage() {
-  const [isDark, setIsDark] = useState(false);
-  const [mounted, setMounted] = useState(false);
   const [typewriterText, setTypewriterText] = useState('');
   const [showContent, setShowContent] = useState(false);
   const [books, setBooks] = useState<Book[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const fullText = "Here are some books I've read recently:";
+  const fullText = "Reading is the key to smart.";
+  const currentPath = usePathname();
 
   const fetchBooks = async () => {
     try {
@@ -42,18 +41,6 @@ export default function ReadsPage() {
       setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    const darkMode = localStorage.getItem('darkMode');
-    setIsDark(darkMode === 'true');
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (mounted) {
-      localStorage.setItem('darkMode', isDark.toString());
-    }
-  }, [isDark, mounted]);
 
   useEffect(() => {
     let i = 0;
@@ -75,152 +62,84 @@ export default function ReadsPage() {
   }, []);
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 font-sans ${
-      !mounted ? 'invisible' : 'visible'} ${
-      isDark ? 'bg-gradient-to-br from-slate-900 to-slate-800 text-white' : 
-      'bg-gradient-to-br from-slate-100 to-white text-slate-900'
-    }`}>
-      <div className="flex flex-col min-h-screen">
-        <nav className="container mx-auto flex justify-between items-center py-6 px-6">
-          <div className="w-8 h-8">
-            <Link href="/">
-              <motion.div
-                className="block"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
+    <PageLayout currentPath={currentPath}>
+      <h2 className="text-5xl font-bold mb-6">
+        {typewriterText}
+        <motion.span 
+          animate={{ opacity: [1, 0] }}
+          transition={{ duration: 0.8, repeat: Infinity }}
+        >|</motion.span>
+      </h2>
+
+      <motion.div 
+        className="mt-12"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: showContent ? 1 : 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        {isLoading ? (
+          <div className="text-center py-8">Loading books...</div>
+        ) : error ? (
+          <div className="text-center py-8 text-red-500">
+            <p>Error: {error}</p>
+            <button
+              onClick={() => {
+                setIsLoading(true);
+                setError(null);
+                fetchBooks();
+              }}
+              className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+            >
+              Try Again
+            </button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {books.map((book) => (
+              <motion.a
+                key={`${book.title}-${book.dateRead}`}
+                href={book.hardcoverUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block p-4 rounded-lg bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors shadow-lg group"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
               >
-                <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center">
-                  <Image src='/images/icon-192x192.png' alt='eric tuovila' height='32' width='32' />
+                <div className="relative aspect-[2/3] mb-4 rounded-md overflow-hidden">
+                  <Image
+                    src={book.coverUrl}
+                    alt={`${book.title} cover`}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 50vw, 33vw"
+                  />
                 </div>
-              </motion.div>
-            </Link>
-          </div>
-
-          <div className="flex items-center gap-6">
-            {[
-              { name: 'home', path: '/' },
-              { name: 'about', path: '/about' },
-              { name: 'listens', path: '/listens' },
-              { name: 'reads', path: '/reads' },
-              { name: 'blog', path: '/blog' }
-            ].map(({ name, path }) => (
-              <motion.div
-                key={path}
-                className="relative"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Link
-                  href={path}
-                  className={`hover:text-blue-400 transition-colors ${
-                    path === '/reads' ? 'text-blue-400' : ''
-                  }`}
-                >
-                  {name}
-                </Link>
-              </motion.div>
-            ))}
-            <motion.button
-              className="p-2 rounded-lg hover:bg-slate-700/20 ml-2"
-              onClick={() => setIsDark(!isDark)}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              {isDark ? <CiLight size={24} /> : <CiDark size={24} />}
-            </motion.button>
-          </div>
-        </nav>
-
-        <main className="flex-1">
-          <div className="container mx-auto px-6">
-            <motion.div 
-              className="max-w-2xl mt-16"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-            >
-              <h2 className="text-5xl font-bold mb-6">
-                {typewriterText}
-                <motion.span 
-                  animate={{ opacity: [1, 0] }}
-                  transition={{ duration: 0.8, repeat: Infinity }}
-                >|</motion.span>
-              </h2>
-
-              <motion.div 
-                className="mt-12"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: showContent ? 1 : 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                {isLoading ? (
-                  <div className="text-center py-8">Loading books...</div>
-                ) : error ? (
-                  <div className="text-center py-8 text-red-500">
-                    <p>Error: {error}</p>
-                    <button
-                      onClick={() => {
-                        setIsLoading(true);
-                        setError(null);
-                        fetchBooks();
-                      }}
-                      className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-                    >
-                      Try Again
-                    </button>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    {books.map((book) => (
-                      <motion.a
-                        key={`${book.title}-${book.dateRead}`}
-                        href={book.hardcoverUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={`block p-4 rounded-lg ${
-                          isDark ? 'bg-slate-800 hover:bg-slate-700' : 'bg-white hover:bg-gray-50'
-                        } transition-colors shadow-lg group`}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
+                <h3 className="font-semibold truncate">{book.title}</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400 truncate">{book.author}</p>
+                {book.rating > 0 && (
+                  <div className="flex items-center mt-1">
+                    {[...Array(5)].map((_, i) => (
+                      <svg
+                        key={i}
+                        className={`w-4 h-4 ${
+                          i < book.rating
+                            ? 'text-yellow-400'
+                            : 'text-gray-300 dark:text-gray-600'
+                        }`}
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
                       >
-                        <div className="relative aspect-[2/3] mb-4 rounded-md overflow-hidden">
-                          <Image
-                            src={book.coverUrl}
-                            alt={`${book.title} cover`}
-                            fill
-                            className="object-cover"
-                            sizes="(max-width: 768px) 50vw, 33vw"
-                          />
-                        </div>
-                        <h3 className="font-semibold truncate">{book.title}</h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 truncate">{book.author}</p>
-                        {book.rating > 0 && (
-                          <div className="flex items-center mt-1">
-                            {[...Array(5)].map((_, i) => (
-                              <svg
-                                key={i}
-                                className={`w-4 h-4 ${
-                                  i < book.rating
-                                    ? 'text-yellow-400'
-                                    : 'text-gray-300 dark:text-gray-600'
-                                }`}
-                                fill="currentColor"
-                                viewBox="0 0 20 20"
-                              >
-                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                              </svg>
-                            ))}
-                          </div>
-                        )}
-                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{book.dateRead}</p>
-                      </motion.a>
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
                     ))}
                   </div>
                 )}
-              </motion.div>
-            </motion.div>
+                <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{book.dateRead}</p>
+              </motion.a>
+            ))}
           </div>
-        </main>
-      </div>
-    </div>
+        )}
+      </motion.div>
+    </PageLayout>
   );
 } 

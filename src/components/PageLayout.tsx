@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import NavBar from './NavBar';
+import Footer from './Footer';
 
 interface PageLayoutProps {
   children: React.ReactNode;
@@ -20,6 +21,11 @@ const PageLayout: React.FC<PageLayoutProps> = ({ children, currentPath }) => {
   useEffect(() => {
     if (mounted) {
       localStorage.setItem('darkMode', isDark.toString());
+      if (isDark) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
     }
   }, [isDark, mounted]);
 
@@ -47,6 +53,8 @@ const PageLayout: React.FC<PageLayoutProps> = ({ children, currentPath }) => {
             </motion.div>
           </div>
         </main>
+
+        <Footer />
       </div>
     </div>
   );

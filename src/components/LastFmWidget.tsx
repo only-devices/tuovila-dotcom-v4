@@ -15,15 +15,23 @@ interface Track {
 const LastFmWidget: React.FC = () => {
   const [tracks, setTracks] = useState<Track[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     const fetchTracks = async () => {
       try {
         const response = await fetch('/api/lastfm');
         const data = await response.json();
-        setTracks(data.tracks);
+        
+        // Verify that data.tracks exists and is an array
+        if (Array.isArray(data.tracks)) {
+          setTracks(data.tracks);
+        } else {
+          setError(true);
+        }
       } catch (error) {
         console.error('Error fetching Last.fm data:', error);
+        setError(true);
       } finally {
         setIsLoading(false);
       }
@@ -56,6 +64,8 @@ const LastFmWidget: React.FC = () => {
         <div className="h-[600px] overflow-y-auto scrollbar bg-white">
           {isLoading ? (
             <div className="font-mono text-sm p-4 text-gray-600">Loading tracks...</div>
+          ) : error || !tracks.length ? (
+            <div className="font-mono text-sm p-4 text-gray-600">No tracks available</div>
           ) : (
             <div className="space-y-px min-w-full">
               {tracks.slice(0, 50).map((track) => (

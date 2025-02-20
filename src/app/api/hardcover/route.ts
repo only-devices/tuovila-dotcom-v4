@@ -36,6 +36,8 @@ interface HardcoverResponse {
   };
 }
 
+const isDev = process.env.NODE_ENV === 'development';
+
 export async function GET() {
   const HARDCOVER_API_KEY = process.env.HARDCOVER_API_KEY;
 
@@ -44,7 +46,7 @@ export async function GET() {
   }
 
   try {
-    console.log('Fetching books from Hardcover...');
+    isDev && console.log('Fetching books from Hardcover...');
     const response = await fetch(
       'https://api.hardcover.app/v1/graphql',
       {
@@ -87,14 +89,14 @@ export async function GET() {
     );
 
     const responseText = await response.text();
-    console.log('Raw API Response:', responseText);
+    isDev && console.log('Raw API Response:', responseText);
 
     if (!response.ok) {
       throw new Error(`Failed to fetch books from Hardcover: ${responseText}`);
     }
 
     const data = JSON.parse(responseText) as HardcoverResponse;
-    console.log('Parsed API Response:', JSON.stringify(data, null, 2));
+    isDev && console.log('Parsed API Response:', JSON.stringify(data, null, 2));
     
     if (!data.data?.me?.[0]?.user_books) {
       console.error('Unexpected response format:', data);
