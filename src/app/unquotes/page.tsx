@@ -6,8 +6,6 @@ import { usePathname } from 'next/navigation';
 import { Quicksand } from 'next/font/google';
 import PageLayout from '@/components/PageLayout';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import { logError, logDebug } from '@/utils/logger';
-
 
 const quicksand = Quicksand({ 
   subsets: ['latin'],
@@ -57,16 +55,12 @@ export default function UnquotesPage() {
         throw new Error('Failed to fetch quote');
       }
       const quoteData = await quoteResponse.json();
-      logDebug('Received quote data:', {quoteData});
       
       if (!quoteData.quote || !quoteData.quote.author_id) {
-        logError('Invalid quote data received:', quoteData);
         throw new Error('Invalid quote data');
       }
       
       setQuote(quoteData.quote);
-      logDebug('Set quote state:', quoteData.quote);
-      logDebug('Attempting to fetch author with ID:', quoteData.quote.author_id);
 
       // Fetch the correct author
       const correctAuthorResponse = await fetch(`/api/authors/${quoteData.quote.author_id}`);
@@ -85,7 +79,6 @@ export default function UnquotesPage() {
       setIncorrectAuthor(incorrectAuthorData.author);
 
     } catch (error) {
-      logError('Error fetching data:', error);
       setError(error instanceof Error ? error.message : 'Failed to fetch data');
     } finally {
       setIsLoading(false);

@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import { logDebug, logError, logInfo } from '@/utils/logger';
 
 interface Author {
   name: string;
@@ -45,7 +44,6 @@ export async function GET() {
   }
 
   try {
-    logInfo('Fetching books from Hardcover...');
     const response = await fetch(
       'https://api.hardcover.app/v1/graphql',
       {
@@ -88,17 +86,14 @@ export async function GET() {
     );
 
     const responseText = await response.text();
-    logDebug('Raw API Response:', { responseText });
 
     if (!response.ok) {
       throw new Error(`Failed to fetch books from Hardcover: ${responseText}`);
     }
 
     const data = JSON.parse(responseText) as HardcoverResponse;
-    logDebug('Parsed API Response:', { data: JSON.stringify(data, null, 2) });
     
     if (!data.data?.me?.[0]?.user_books) {
-      logError('Unexpected response format:', data);
       throw new Error('Invalid response format from Hardcover API');
     }
 
@@ -112,10 +107,6 @@ export async function GET() {
 
     return NextResponse.json({ books });
   } catch (error) {
-    await logError('Error fetching Hardcover data', { 
-      error: error instanceof Error ? error.message : 'Failed to fetch books',
-      details: process.env.NODE_ENV === 'development' ? String(error) : undefined
-    });
     return NextResponse.json({ 
       error: error instanceof Error ? error.message : 'Failed to fetch books',
       details: process.env.NODE_ENV === 'development' ? String(error) : undefined

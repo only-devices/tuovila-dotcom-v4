@@ -1,6 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
-import { logError, logInfo, logDebug } from '@/utils/logger';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -13,7 +12,6 @@ export async function GET(
 ) {
   try {
     const { id: authorId } = await context.params;
-    logInfo(`Fetching author with ID: ${authorId}`);
 
     const { data: author, error } = await supabase
       .from('authors')
@@ -22,19 +20,15 @@ export async function GET(
       .single();
 
     if (error) {
-      logError('Supabase error occurred', error);
       throw error;
     }
 
     if (!author) {
-      logError(`No author found with ID: ${authorId}`);
       throw new Error('Author not found');
     }
 
-    logDebug('Successfully fetched author:', author);
     return NextResponse.json({ author });
   } catch (error) {
-    logError('Error fetching author', error);
     return NextResponse.json(
       { 
         error: 'Failed to fetch author',

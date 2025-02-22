@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import { getAllPosts } from '@/lib/notion';
 import { isValidPost, getExcerptFromBlocks, formatDate } from '@/utils/notion';
 import { BlockObjectResponse } from '@notionhq/client/build/src/api-endpoints';
-import { logError, logInfo } from '@/utils/logger';
 
 export const revalidate = 60; // Revalidate every minute
 
@@ -30,12 +29,10 @@ export async function GET() {
       }));
 
     if (formattedPosts.length === 0) {
-      logInfo('No valid posts found in Notion response');
     }
 
     return NextResponse.json({ posts: formattedPosts });
   } catch (error) {
-    logError('Error fetching blog posts:', error);
     return NextResponse.json({ 
       error: error instanceof Error ? error.message : 'Failed to fetch posts',
       details: process.env.NODE_ENV === 'development' ? String(error) : undefined
