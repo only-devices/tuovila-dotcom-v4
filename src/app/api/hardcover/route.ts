@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { logError, logInfo } from '@/utils/logger';
 
 interface Author {
   name: string;
@@ -113,7 +114,10 @@ export async function GET() {
 
     return NextResponse.json({ books });
   } catch (error) {
-    console.error('Error fetching Hardcover data:', error);
+    await logError('Error fetching Hardcover data', { 
+      error: error instanceof Error ? error.message : 'Failed to fetch books',
+      details: process.env.NODE_ENV === 'development' ? String(error) : undefined
+    });
     return NextResponse.json({ 
       error: error instanceof Error ? error.message : 'Failed to fetch books',
       details: process.env.NODE_ENV === 'development' ? String(error) : undefined

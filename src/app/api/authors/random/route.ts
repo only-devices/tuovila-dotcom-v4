@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
+import { logError, logInfo, logDebug } from '@/utils/logger';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -13,7 +14,7 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const excludeId = searchParams.get('exclude');
     
-    isDev && console.log('Fetching random author, excluding ID:', excludeId);
+    logInfo(`Fetching random author${excludeId ? `, excluding ID: ${excludeId}` : ''}`);
 
     let query = supabase
       .from('authors')
@@ -27,24 +28,19 @@ export async function GET(request: Request) {
     const { data: author, error } = await query.single();
 
     if (error) {
-      console.error('Supabase error details:', {
-        code: error.code,
-        message: error.message,
-        details: error.details,
-        hint: error.hint
-      });
+      logError('Supabase error occurred', error);
       throw error;
     }
 
     if (!author) {
-      console.error('No author found');
+      logError('No author found');
       throw new Error('No author found');
     }
 
-    isDev && console.log('Successfully fetched random author:', author);
+    logDebug('Successfully fetched random author:', author);
     return NextResponse.json({ author });
   } catch (error) {
-    console.error('Error fetching random author:', error);
+    logError('Error fetching random author', error);
     return NextResponse.json(
       { 
         error: 'Failed to fetch random author',

@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { setupGlobalErrorHandling } from "@/utils/logger";
 import "./globals.css";
+
+// Setup global error handling
+setupGlobalErrorHandling();
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

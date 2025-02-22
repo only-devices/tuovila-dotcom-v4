@@ -19,3 +19,9 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.highlight {
+  color: #d51007; /* Change to your desired highlight color */
+  font-weight: bold; /* Make it bold */
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.5); /* Optional: add a glow effect */
+}

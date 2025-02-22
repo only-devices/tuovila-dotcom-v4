@@ -42,10 +42,10 @@ const PageLayout: React.FC<PageLayoutProps> = ({ children, currentPath }) => {
           setIsDark={setIsDark}
         />
 
-        <main className="flex-1">
-          <div className="container mx-auto px-6">
+        <main className="flex-1 pt-16">
+          <div className="max-w-[1100px] mx-auto px-4 sm:px-6">
             <motion.div 
-              className="max-w-2xl mt-16"
+              className="max-w-2xl mx-auto mt-8 sm:mt-16"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
             >

@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
+import { logError, logInfo, logDebug } from '@/utils/logger';
 
 interface Quote {
   id: number;
@@ -19,25 +20,20 @@ const isDev = process.env.NODE_ENV === 'development';
 
 export async function GET() {
   try {
-    isDev && console.log('Attempting to fetch random quote...');
+    logInfo('Attempting to fetch random quote...');
     
     const { data, error } = await supabase
       .rpc('get_random_unquote');
 
-    isDev && console.log('Raw RPC response:', data);
+    logDebug('Raw RPC response:', data);
 
     if (error) {
-      isDev && console.error('Supabase error details:', {
-        code: error.code,
-        message: error.message,
-        details: error.details,
-        hint: error.hint
-      });
+      logError('Supabase error occurred', error);
       throw error;
     }
 
     if (!data) {
-      isDev && console.error('No quote returned from database');
+      logError('No quote returned from database');
       throw new Error('No quote found');
     }
 
@@ -45,11 +41,11 @@ export async function GET() {
     const quote = Array.isArray(data) ? data[0] : data as Quote;
 
     if (!quote || !quote.unquote || !quote.author_id || !quote.source) {
-      isDev && console.error('Invalid quote data structure:', quote);
+      logError('Invalid quote data structure');
       throw new Error('Invalid quote data structure');
     }
 
-    isDev && console.log('Successfully fetched quote:', {
+    logDebug('Successfully fetched quote:', {
       id: quote.id,
       content: quote.unquote,
       author_id: quote.author_id,
@@ -66,7 +62,7 @@ export async function GET() {
       }
     });
   } catch (error) {
-    isDev && console.error('Error fetching random quote:', error);
+    logError('Error fetching random quote', error);
     return NextResponse.json(
       { 
         error: 'Failed to fetch random quote',
