@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server';
+import { logError } from '@/utils/logger';
+
 
 const LASTFM_API_KEY = process.env.LASTFM_API_KEY;
 const LASTFM_USERNAME = process.env.LASTFM_USERNAME || 'only-devices';
@@ -52,7 +54,7 @@ export async function GET() {
 
     return NextResponse.json({ tracks });
   } catch (error) {
-    console.error('Error fetching Last.fm data:', error);
+    logError('Error fetching Last.fm data:', error);
     return NextResponse.json({ error: 'Failed to fetch tracks' }, { status: 500 });
   }
 } 

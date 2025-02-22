@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getPost } from '@/lib/notion';
 import { formatDate } from '@/utils/notion';
 import { NotionPost } from '@/types/notion';
+import { logError } from '@/utils/logger';
+
 
 export const revalidate = 60; // Revalidate every minute
 
@@ -38,7 +40,7 @@ export async function GET(
 
     return NextResponse.json({ post: formattedPost });
   } catch (error) {
-    console.error('Error fetching blog post:', error);
+    logError('Error fetching blog post:', error);
     return NextResponse.json({ 
       error: error instanceof Error ? error.message : 'Failed to fetch post',
       details: process.env.NODE_ENV === 'development' ? String(error) : undefined

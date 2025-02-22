@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import PageLayout from '@/components/PageLayout';
+import { logError } from '@/utils/logger';
+
 
 interface BlogPost {
   title: string;
@@ -39,7 +41,7 @@ export default function BlogPage() {
       const data = await response.json();
       setPosts(data.posts);
     } catch (error) {
-      console.error('Error fetching posts:', error);
+      logError('Error fetching posts:', error);
     } finally {
       setIsLoading(false);
     }
@@ -58,7 +60,7 @@ export default function BlogPage() {
         [slug]: data.post
       }));
     } catch (error) {
-      console.error('Error preloading post:', error);
+      logError('Error preloading post:', error);
     }
   }, [preloadedPosts]);
 

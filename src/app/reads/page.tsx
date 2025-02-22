@@ -5,6 +5,8 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import PageLayout from '@/components/PageLayout';
+import { logError } from '@/utils/logger';
+
 
 interface Book {
   title: string;
@@ -35,7 +37,7 @@ export default function ReadsPage() {
       setBooks(data.books);
       setError(null);
     } catch (error) {
-      console.error('Error fetching books:', error);
+      logError('Error fetching books:', error);
       setError(error instanceof Error ? error.message : 'Failed to fetch books');
     } finally {
       setIsLoading(false);

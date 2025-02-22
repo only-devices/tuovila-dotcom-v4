@@ -7,7 +7,6 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-const isDev = process.env.NODE_ENV === 'development';
 export async function GET(
   request: Request,
   context: { params: Promise<{ id: string }> }
@@ -32,7 +31,7 @@ export async function GET(
       throw new Error('Author not found');
     }
 
-    isDev && logDebug('Successfully fetched author:', author);
+    logDebug('Successfully fetched author:', author);
     return NextResponse.json({ author });
   } catch (error) {
     logError('Error fetching author', error);

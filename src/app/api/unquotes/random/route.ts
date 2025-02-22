@@ -16,8 +16,6 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-const isDev = process.env.NODE_ENV === 'development';
-
 export async function GET() {
   try {
     logInfo('Attempting to fetch random quote...');

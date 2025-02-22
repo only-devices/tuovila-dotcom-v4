@@ -7,8 +7,6 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-const isDev = process.env.NODE_ENV === 'development';
-
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);

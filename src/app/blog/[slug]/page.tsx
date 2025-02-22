@@ -1,13 +1,14 @@
 'use client'
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { motion } from 'framer-motion';
 import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
 import { Quicksand } from 'next/font/google';
 import { useParams, usePathname } from 'next/navigation';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import PageLayout from '@/components/PageLayout';
+import { logError } from '@/utils/logger';
+
 
 const quicksand = Quicksand({ 
   subsets: ['latin'],
@@ -53,7 +54,7 @@ export default function BlogPostPage() {
       setPost(data.post);
       setError(null);
     } catch (error) {
-      console.error('Error fetching post:', error);
+      logError('Error fetching post:', error);
       setError(error instanceof Error ? error.message : 'Failed to fetch post');
       setPost(null);
     } finally {

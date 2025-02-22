@@ -11,7 +11,7 @@ const supabase = createClient(
 
 // Define the structure for log details
 interface LogDetails {
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 // Log levels matching the Postgres enum
@@ -97,7 +97,7 @@ export function logDebug(message: string, details: LogDetails = {}) {
 export function setupGlobalErrorHandling() {
   if (typeof process !== 'undefined') {
     // Handle unhandled promise rejections
-    process.on('unhandledRejection', (reason, promise) => {
+    process.on('unhandledRejection', (reason) => {
       logError('Unhandled Promise Rejection', reason);
     });
 

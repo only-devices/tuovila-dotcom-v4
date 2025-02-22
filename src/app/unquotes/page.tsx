@@ -6,12 +6,12 @@ import { usePathname } from 'next/navigation';
 import { Quicksand } from 'next/font/google';
 import PageLayout from '@/components/PageLayout';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import { logError, logDebug } from '@/utils/logger';
+
 
 const quicksand = Quicksand({ 
   subsets: ['latin'],
 });
-
-const isDev = process.env.NODE_ENV === 'development';
 
 interface Quote {
   id: number;
@@ -57,16 +57,16 @@ export default function UnquotesPage() {
         throw new Error('Failed to fetch quote');
       }
       const quoteData = await quoteResponse.json();
-      isDev && console.log('Received quote data:', quoteData);
+      logDebug('Received quote data:', {quoteData});
       
       if (!quoteData.quote || !quoteData.quote.author_id) {
-        isDev && console.error('Invalid quote data received:', quoteData);
+        logError('Invalid quote data received:', quoteData);
         throw new Error('Invalid quote data');
       }
       
       setQuote(quoteData.quote);
-      isDev && console.log('Set quote state:', quoteData.quote);
-      isDev && console.log('Attempting to fetch author with ID:', quoteData.quote.author_id);
+      logDebug('Set quote state:', quoteData.quote);
+      logDebug('Attempting to fetch author with ID:', quoteData.quote.author_id);
 
       // Fetch the correct author
       const correctAuthorResponse = await fetch(`/api/authors/${quoteData.quote.author_id}`);
@@ -85,7 +85,7 @@ export default function UnquotesPage() {
       setIncorrectAuthor(incorrectAuthorData.author);
 
     } catch (error) {
-      isDev && console.error('Error fetching data:', error);
+      logError('Error fetching data:', error);
       setError(error instanceof Error ? error.message : 'Failed to fetch data');
     } finally {
       setIsLoading(false);
@@ -123,7 +123,7 @@ export default function UnquotesPage() {
       onHoverStart={() => !isRevealed && setIsRevealed(true)}
       whileHover={{ scale: 1.02 }}
     >
-      <p className="text-xl italic mb-4">"{quote.content}"</p>
+      <p className="text-xl italic mb-4">&quot;{quote.content}&quot;</p>
       <div className="relative">
         <motion.div
           className="absolute inset-0 flex justify-end items-center"

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { FaLastfm } from 'react-icons/fa';
 import Image from 'next/image';
-
+import { logError } from '@/utils/logger';
 interface Track {
   name: string;
   artist: string;
@@ -30,7 +30,7 @@ const LastFmWidget: React.FC = () => {
           setError(true);
         }
       } catch (error) {
-        console.error('Error fetching Last.fm data:', error);
+        logError('Error fetching Last.fm data:', error);
         setError(true);
       } finally {
         setIsLoading(false);

@@ -1,5 +1,7 @@
 import { BlockObjectResponse, ParagraphBlockObjectResponse } from '@notionhq/client/build/src/api-endpoints';
 import { NotionPost } from '@/types/notion';
+import { logError } from '@/utils/logger';
+
 
 export function isParagraphBlock(block: BlockObjectResponse): block is ParagraphBlockObjectResponse {
   return block.type === 'paragraph';
@@ -23,7 +25,7 @@ export function getExcerptFromBlocks(blocks: BlockObjectResponse[]) {
 
 export function isValidPost(post: unknown): post is NotionPost {
   if (!post || typeof post !== 'object' || !('properties' in post)) {
-    console.warn('Invalid post object structure');
+    logError('Invalid post object structure');
     return false;
   }
 
@@ -31,25 +33,25 @@ export function isValidPost(post: unknown): post is NotionPost {
   
   // Check Title
   if (!props.Title || typeof props.Title !== 'object' || !('type' in props.Title) || props.Title.type !== 'title') {
-    console.warn('Invalid Title property');
+    logError('Invalid Title property');
     return false;
   }
 
   // Check Date
   if (!props.Date || typeof props.Date !== 'object' || !('type' in props.Date) || props.Date.type !== 'date') {
-    console.warn('Invalid Date property');
+    logError('Invalid Date property');
     return false;
   }
 
   // Check Slug
   if (!props.Slug || typeof props.Slug !== 'object' || !('type' in props.Slug) || props.Slug.type !== 'rich_text') {
-    console.warn('Invalid Slug property');
+    logError('Invalid Slug property');
     return false;
   }
 
   // Check Published
   if (!props.Published || typeof props.Published !== 'object' || !('type' in props.Published) || props.Published.type !== 'checkbox') {
-    console.warn('Invalid Published property');
+    logError('Invalid Published property');
     return false;
   }
 
@@ -63,7 +65,7 @@ export function isValidPost(post: unknown): post is NotionPost {
 
   const isValid = hasTitle && hasDate && hasSlug && isPublished;
   if (!isValid) {
-    console.warn('Post validation failed:', {
+    logError('Post validation failed:', {
       hasTitle,
       hasDate,
       hasSlug,

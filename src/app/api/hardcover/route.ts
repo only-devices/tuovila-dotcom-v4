@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { logError, logInfo } from '@/utils/logger';
+import { logDebug, logError, logInfo } from '@/utils/logger';
 
 interface Author {
   name: string;
@@ -37,8 +37,6 @@ interface HardcoverResponse {
   };
 }
 
-const isDev = process.env.NODE_ENV === 'development';
-
 export async function GET() {
   const HARDCOVER_API_KEY = process.env.HARDCOVER_API_KEY;
 
@@ -47,7 +45,7 @@ export async function GET() {
   }
 
   try {
-    isDev && console.log('Fetching books from Hardcover...');
+    logInfo('Fetching books from Hardcover...');
     const response = await fetch(
       'https://api.hardcover.app/v1/graphql',
       {
@@ -90,17 +88,17 @@ export async function GET() {
     );
 
     const responseText = await response.text();
-    isDev && console.log('Raw API Response:', responseText);
+    logDebug('Raw API Response:', { responseText });
 
     if (!response.ok) {
       throw new Error(`Failed to fetch books from Hardcover: ${responseText}`);
     }
 
     const data = JSON.parse(responseText) as HardcoverResponse;
-    isDev && console.log('Parsed API Response:', JSON.stringify(data, null, 2));
+    logDebug('Parsed API Response:', { data: JSON.stringify(data, null, 2) });
     
     if (!data.data?.me?.[0]?.user_books) {
-      console.error('Unexpected response format:', data);
+      logError('Unexpected response format:', data);
       throw new Error('Invalid response format from Hardcover API');
     }
 
