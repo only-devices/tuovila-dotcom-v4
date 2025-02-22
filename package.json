@@ -12,6 +12,8 @@
     "@notionhq/client": "^2.2.16",
     "@supabase/supabase-js": "^2.48.1",
     "@tailwindcss/typography": "^0.5.16",
+    "@vercel/analytics": "^1.5.0",
+    "@vercel/speed-insights": "^1.2.0",
     "framer-motion": "^12.4.3",
     "next": "15.1.7",
     "notion-client": "^7.1.6",
