@@ -1,0 +1,11 @@
+# *
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /private
+
+# Host
+Host: https://tuovila.com
+
+# Sitemaps
+Sitemap: https://tuovila.com/sitemap.xml

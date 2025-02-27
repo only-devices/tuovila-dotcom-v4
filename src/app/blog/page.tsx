@@ -26,7 +26,7 @@ export default function BlogPage() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [preloadedPosts, setPreloadedPosts] = useState<Record<string, BlogPostDetail>>({});
-  const fullText = "Observations, ramblings, and musings incoming!";
+  const fullText = "Observations, ramblings, and musings ahead...";
   const currentPath = usePathname();
 
   const fetchPosts = async () => {
