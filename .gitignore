@@ -44,3 +44,5 @@ public/workbox-*.js
 
 # Turborepo
 .turbo
+# Sentry Config File
+.env.sentry-build-plugin
