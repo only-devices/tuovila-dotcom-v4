@@ -8,6 +8,7 @@ interface Track {
   artist: string;
   album?: string;
   date: string;
+  timestamp?: string | null;
   image?: string;
   url?: string;
 }
@@ -25,7 +26,28 @@ const LastFmWidget: React.FC = () => {
         
         // Verify that data.tracks exists and is an array
         if (Array.isArray(data.tracks)) {
-          setTracks(data.tracks);
+          // Format dates in local timezone
+          const tracksWithLocalTime = data.tracks.map((track: Track) => {
+            // If it's a "Now Playing" track, keep as is
+            if (track.date === 'Now Playing' || !track.timestamp) {
+              return track;
+            }
+            
+            // Convert Unix timestamp to local timezone
+            const date = new Date(parseInt(track.timestamp) * 1000);
+            
+            // Format date in local timezone
+            track.date = date.toLocaleString(undefined, {
+              month: 'short',
+              day: 'numeric',
+              hour: 'numeric',
+              minute: '2-digit'
+            });
+            
+            return track;
+          });
+          
+          setTracks(tracksWithLocalTime);
         } else {
           setError(true);
         }

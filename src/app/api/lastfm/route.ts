@@ -46,6 +46,7 @@ export async function GET() {
       artist: track.artist['#text'],
       album: track.album['#text'],
       date: track.date?.['#text'] || 'Now Playing',
+      timestamp: track.date?.uts || null,
       image: track.image.find((img) => img.size === 'large')?.['#text'] || track.image[0]?.['#text'],
       url: track.url
     }));
