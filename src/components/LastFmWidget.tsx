@@ -83,14 +83,14 @@ const LastFmWidget: React.FC = () => {
         </div>
 
         {/* Playlist */}
-        <div className="h-[600px] overflow-y-auto scrollbar bg-white">
+        <div className="h-[300px] overflow-y-auto scrollbar bg-white">
           {isLoading ? (
             <div className="font-mono text-sm p-4 text-gray-600">Loading tracks...</div>
           ) : error || !tracks.length ? (
             <div className="font-mono text-sm p-4 text-gray-600">No tracks available</div>
           ) : (
             <div className="space-y-px min-w-full">
-              {tracks.slice(0, 50).map((track) => (
+              {tracks.slice(0, 5).map((track) => (
                 <motion.div
                   key={`${track.name}-${track.date}`}
                   className={`block p-3 font-mono text-sm cursor-pointer border-b border-gray-100 group text-gray-600 hover:bg-gray-50`}
@@ -154,4 +154,4 @@ const LastFmWidget: React.FC = () => {
   );
 };
 
-export default LastFmWidget; 
+export default LastFmWidget;
