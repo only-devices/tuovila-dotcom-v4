@@ -44,6 +44,12 @@ export async function GET() {
   }
 
   try {
+
+    // Calculate the date 12 months ago in YYYY-MM-DD format
+    const twelveMonthsAgo = new Date();
+    twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
+    const twelveMonthsAgoStr = twelveMonthsAgo.toISOString().split('T')[0];
+
     const response = await fetch(
       'https://api.hardcover.app/v1/graphql',
       {
@@ -56,9 +62,8 @@ export async function GET() {
           query: `{
             me {
               user_books(
-                where: {status_id: {_eq: 3}, last_read_date: {_is_null: false}}
+                where: {status_id: {_eq: 3}, last_read_date: {_gte: "${twelveMonthsAgoStr}"}}
                 order_by: {last_read_date: desc}
-                limit: 12
               ) {
                 rating
                 book {
