@@ -4,13 +4,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaGithub, FaLinkedin, FaSoundcloud, FaBook, FaLastfm } from 'react-icons/fa';
-import { Quicksand } from 'next/font/google';
+// Quicksand font is now loaded globally in RootLayout
 import { usePathname } from 'next/navigation';
 import PageLayout from '@/components/PageLayout';
 
-const quicksand = Quicksand({
-  subsets: ['latin'],
-});
+  // font classes are applied globally in RootLayout
 
 // Define our greeting interfaces
 interface Greeting {
@@ -204,7 +202,7 @@ const Tuovila = () => {
       </h2>
 
       <motion.p
-        className={`text-xl mt-8 h-8 ${quicksand.className} font-light tracking-wide opacity-85`}
+        className={`text-xl mt-8 h-8 font-light tracking-wide opacity-85`}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1 }}
