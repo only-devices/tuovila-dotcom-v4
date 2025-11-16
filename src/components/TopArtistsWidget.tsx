@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { FaLastfm } from 'react-icons/fa';
+import Image from 'next/image';
 
 interface Artist {
   name: string;
   playcount: string;
   url: string;
+  image?: string;
 }
 
 interface TopArtistsWidgetProps {
@@ -21,7 +23,7 @@ const TopArtistsWidget: React.FC<TopArtistsWidgetProps> = ({ period, title }) =>
   useEffect(() => {
     const fetchTopArtists = async () => {
       try {
-        const response = await fetch(`/api/lastfm/top-artists?period=${period}&limit=5`);
+        const response = await fetch(`/api/lastfm/top-artists?period=${period}&limit=50`);
         const data = await response.json();
         
         if (Array.isArray(data.artists)) {
@@ -79,6 +81,21 @@ const TopArtistsWidget: React.FC<TopArtistsWidgetProps> = ({ period, title }) =>
                     <div className="text-lg font-bold text-[#d51007] w-6 text-center flex-shrink-0">
                       {index + 1}
                     </div>
+                    <div className="relative w-12 h-12 flex-shrink-0">
+                                          {artist.image ? (
+                                            <Image
+                                              src={artist.image}
+                                              alt={`${artist.name} album art`}
+                                              fill
+                                              className="object-cover rounded"
+                                              sizes="48px"
+                                            />
+                                          ) : (
+                                            <div className="w-full h-full bg-gray-200 rounded flex items-center justify-center">
+                                              <FaLastfm className="text-gray-400 w-6 h-6" />
+                                            </div>
+                                          )}
+                                        </div>
                     <div className="flex-1 min-w-0">
                       <div className="font-semibold truncate">{artist.name}</div>
                       <div className="text-xs text-gray-500 mt-1">

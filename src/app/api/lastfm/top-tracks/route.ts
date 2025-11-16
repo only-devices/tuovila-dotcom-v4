@@ -1,6 +1,11 @@
 // src/app/api/lastfm/top-tracks/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 
+interface LastFmImage {
+  '#text': string;
+  size: 'small' | 'medium' | 'large' | 'extralarge';
+}
+
 interface LastFmTrackArtist {
   name: string;
 }
@@ -10,6 +15,7 @@ interface LastFmTopTrack {
   artist: LastFmTrackArtist;
   playcount: string;
   url: string;
+  image: LastFmImage[];
 }
 
 interface LastFmTopTracksResponse {
@@ -21,7 +27,7 @@ interface LastFmTopTracksResponse {
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const period = searchParams.get('period') || '7day';
-  const limit = searchParams.get('limit') || '5';
+  const limit = searchParams.get('limit') || '50';
 
   const API_KEY = process.env.LASTFM_API_KEY;
   const USERNAME = process.env.LASTFM_USERNAME;
@@ -49,7 +55,8 @@ export async function GET(request: NextRequest) {
         name: track.name,
         artist: track.artist.name,
         playcount: track.playcount,
-        url: track.url
+        url: track.url,
+        image: track.image.find((img) => img.size === 'large')?.['#text'] || track.image[0]?.['#text'],
       };
     }) || [];
 

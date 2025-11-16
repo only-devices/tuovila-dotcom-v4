@@ -1,10 +1,16 @@
 // src/app/api/lastfm/top-artists/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 
+interface LastFmImage {
+  '#text': string;
+  size: 'small' | 'medium' | 'large' | 'extralarge';
+}
+
 interface LastFmArtist {
   name: string;
   playcount: string;
   url: string;
+  image: LastFmImage[];
 }
 
 interface LastFmTopArtistsResponse {
@@ -16,7 +22,7 @@ interface LastFmTopArtistsResponse {
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const period = searchParams.get('period') || '7day';
-  const limit = searchParams.get('limit') || '5';
+  const limit = searchParams.get('limit') || '50';
 
   const API_KEY = process.env.LASTFM_API_KEY;
   const USERNAME = process.env.LASTFM_USERNAME;
@@ -41,7 +47,8 @@ export async function GET(request: NextRequest) {
     const artists = data.topartists?.artist?.map((artist: LastFmArtist) => ({
       name: artist.name,
       playcount: artist.playcount,
-      url: artist.url
+      url: artist.url,
+      image: artist.image.find((img) => img.size === 'large')?.['#text'] || artist.image[0]?.['#text'],
     })) || [];
 
     return NextResponse.json({ artists });

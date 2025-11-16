@@ -51,34 +51,17 @@ export default function ListensPage() {
         </div>
 
         {/* Top Artists and Tracks Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Weekly Stats */}
-          <div className="space-y-4">
-            <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-3">
-              Past 7 Days
-            </h3>
-            <TopArtistsWidget 
-              period="7day" 
-              title="Top Artists" 
-            />
-            <TopTracksWidget 
-              period="7day" 
-              title="Top Tracks" 
-            />
-          </div>
+        <div className="grid grid-cols-1 gap-6">
 
           {/* Monthly Stats */}
           <div className="space-y-4">
-            <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-3">
-              Past 30 Days
-            </h3>
             <TopArtistsWidget 
               period="1month" 
-              title="Top Artists" 
+              title="Top Artists - Past 30 Days" 
             />
             <TopTracksWidget 
               period="1month" 
-              title="Top Tracks" 
+              title="Top Tracks - Past 30 Days" 
             />
           </div>
         </div>

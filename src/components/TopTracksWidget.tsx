@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { FaLastfm } from 'react-icons/fa';
+import Image from 'next/image';
 
 interface Track {
   name: string;
   artist: string;
   playcount: string;
   url: string;
+  image?: string;
 }
 
 interface TopTracksWidgetProps {
@@ -22,9 +24,9 @@ const TopTracksWidget: React.FC<TopTracksWidgetProps> = ({ period, title }) => {
   useEffect(() => {
     const fetchTopTracks = async () => {
       try {
-        const response = await fetch(`/api/lastfm/top-tracks?period=${period}&limit=5`);
+        const response = await fetch(`/api/lastfm/top-tracks?period=${period}&limit=50`);
         const data = await response.json();
-        
+
         if (Array.isArray(data.tracks)) {
           setTracks(data.tracks);
         } else {
@@ -42,7 +44,7 @@ const TopTracksWidget: React.FC<TopTracksWidgetProps> = ({ period, title }) => {
   }, [period]);
 
   return (
-    <motion.div 
+    <motion.div
       className="w-full"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -79,6 +81,21 @@ const TopTracksWidget: React.FC<TopTracksWidgetProps> = ({ period, title }) => {
                   <div className="flex items-center gap-3">
                     <div className="text-lg font-bold text-[#d51007] w-6 text-center flex-shrink-0">
                       {index + 1}
+                    </div>
+                    <div className="relative w-12 h-12 flex-shrink-0">
+                      {track.image ? (
+                        <Image
+                          src={track.image}
+                          alt={`${track.name} album art`}
+                          fill
+                          className="object-cover rounded"
+                          sizes="48px"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gray-200 rounded flex items-center justify-center">
+                          <FaLastfm className="text-gray-400 w-6 h-6" />
+                        </div>
+                      )}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="font-semibold truncate">{track.artist} - {track.name}</div>
