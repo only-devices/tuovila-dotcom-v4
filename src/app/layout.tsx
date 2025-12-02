@@ -4,6 +4,7 @@ import "./globals.css";
 import { Analytics } from "@vercel/analytics/react"
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { GoogleTagManager } from '@next/third-parties/google'
+import MainLayout from "@/components/MainLayout";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -43,11 +44,30 @@ export default function RootLayout({
       <head>
         <link rel="icon" type="image/x-icon" href="/images/favicon.ico" sizes="32x32" />
         <link rel="icon" type="image/png" href="/images/icon-192x192.png" sizes="192x192" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var darkMode = localStorage.getItem('darkMode');
+                  var supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+                  if (darkMode === 'true' || (!darkMode && supportDarkMode)) {
+                    document.documentElement.classList.add('dark');
+                  } else {
+                    document.documentElement.classList.remove('dark');
+                  }
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${quicksand.variable} antialiased`}
       >
-        {children}
+        <MainLayout>
+          {children}
+        </MainLayout>
         <Analytics />
         <SpeedInsights />
         <GoogleTagManager gtmId={gtmId} />

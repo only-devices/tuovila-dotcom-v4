@@ -4,11 +4,10 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
 import { Quicksand } from 'next/font/google';
-import { useParams, usePathname } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import PageLayout from '@/components/PageLayout';
 
-const quicksand = Quicksand({ 
+const quicksand = Quicksand({
   subsets: ['latin'],
 });
 
@@ -24,7 +23,7 @@ export default function BlogPostPage() {
   const [error, setError] = useState<string | null>(null);
   const routeParams = useParams();
   const slug = routeParams.slug as string;
-  const currentPath = usePathname();
+
 
   const fetchPost = useCallback(async () => {
     try {
@@ -33,14 +32,14 @@ export default function BlogPostPage() {
       setPost(null);
 
       const response = await fetch(`/api/blog/${slug}`);
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Failed to fetch post');
       }
 
       const data = await response.json();
-      
+
       if (!data.post) {
         throw new Error('Post data not found in response');
       }
@@ -64,7 +63,7 @@ export default function BlogPostPage() {
   }, [fetchPost]);
 
   return (
-    <PageLayout currentPath={currentPath}>
+    <>
       {isLoading ? (
         <div className="flex flex-col items-center justify-center py-16">
           <LoadingSpinner size={48} />
@@ -123,6 +122,6 @@ export default function BlogPostPage() {
           </Link>
         </div>
       )}
-    </PageLayout>
+    </>
   );
 } 

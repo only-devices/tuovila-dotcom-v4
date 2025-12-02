@@ -5,10 +5,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaGithub, FaLinkedin, FaSoundcloud, FaBook, FaLastfm } from 'react-icons/fa';
 // Quicksand font is now loaded globally in RootLayout
-import { usePathname } from 'next/navigation';
-import PageLayout from '@/components/PageLayout';
-
-  // font classes are applied globally in RootLayout
+// font classes are applied globally in RootLayout
 
 // Define our greeting interfaces
 interface Greeting {
@@ -97,7 +94,7 @@ const Tuovila = () => {
   const [greeting, setGreeting] = useState<Greeting | null>(null);
   const [isHovered, setIsHovered] = useState(false);
   const fullText = " I'm Eric. Welcome to my site.";
-  const currentPath = usePathname();
+
 
   const randomMessages = useMemo(() => [
     "Have a nice day! 😊",
@@ -130,9 +127,9 @@ const Tuovila = () => {
   }, [randomMessages]);
 
   return (
-    <PageLayout currentPath={currentPath}>
+    <>
       <h2 className="text-5xl font-bold mb-6">
-        <motion.span 
+        <motion.span
           className="highlight"
           key={description}
           initial={{ scale: 1 }}
@@ -140,7 +137,7 @@ const Tuovila = () => {
           transition={{ duration: 0.3, yoyo: Infinity }}
         >
         </motion.span>
-        
+
         {/* Greeting with tooltip */}
         {greeting && (
           <motion.span
@@ -151,7 +148,7 @@ const Tuovila = () => {
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
           >
-            <motion.span 
+            <motion.span
               className="cursor-help inline-block text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
               whileHover={{ scale: 1.05 }}
             >
@@ -182,7 +179,7 @@ const Tuovila = () => {
                       {greeting.region}
                     </span>
                   </div>
-                  
+
                   {/* Tooltip arrow - positioned relative to the text */}
                   <div className="absolute -bottom-1 left-4 transform -translate-x-1/2 w-2 h-2 bg-slate-800 dark:bg-slate-700 rotate-45" />
                 </motion.div>
@@ -190,12 +187,12 @@ const Tuovila = () => {
             </AnimatePresence>
           </motion.span>
         )}
-        
+
         {/* Typewriter text */}
         {typewriterText}
-        
+
         {/* Cursor */}
-        <motion.span 
+        <motion.span
           animate={{ opacity: [1, 0] }}
           transition={{ duration: 0.8, repeat: Infinity }}
         >|</motion.span>
@@ -276,7 +273,7 @@ const Tuovila = () => {
           </motion.div>
         )}
       </AnimatePresence>
-    </PageLayout>
+    </>
   );
 };
 

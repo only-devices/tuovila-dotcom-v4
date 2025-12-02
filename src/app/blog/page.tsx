@@ -3,9 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import PageLayout from '@/components/PageLayout';
 
 interface BlogPost {
   title: string;
@@ -27,7 +25,7 @@ export default function BlogPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [preloadedPosts, setPreloadedPosts] = useState<Record<string, BlogPostDetail>>({});
   const fullText = "Observations, ramblings, and musings ahead...";
-  const currentPath = usePathname();
+
 
   const fetchPosts = async () => {
     try {
@@ -51,7 +49,7 @@ export default function BlogPage() {
     try {
       const response = await fetch(`/api/blog/${slug}`);
       if (!response.ok) return;
-      
+
       const data = await response.json();
       setPreloadedPosts(prev => ({
         ...prev,
@@ -77,21 +75,21 @@ export default function BlogPage() {
         setShowContent(true);
       }
     }, 50);
-    
+
     return () => clearInterval(typewriter);
   }, []);
 
   return (
-    <PageLayout currentPath={currentPath}>
+    <>
       <h2 className="text-5xl font-bold mb-6">
         {typewriterText}
-        <motion.span 
+        <motion.span
           animate={{ opacity: [1, 0] }}
           transition={{ duration: 0.8, repeat: Infinity }}
         >|</motion.span>
       </h2>
 
-      <motion.div 
+      <motion.div
         className="mt-12"
         initial={{ opacity: 0 }}
         animate={{ opacity: showContent ? 1 : 0 }}
@@ -128,6 +126,6 @@ export default function BlogPage() {
           </div>
         )}
       </motion.div>
-    </PageLayout>
+    </>
   );
 }

@@ -3,8 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
-import PageLayout from '@/components/PageLayout';
+
 
 interface Book {
   title: string;
@@ -24,7 +23,7 @@ export default function ReadsPage() {
   const [hoveredBook, setHoveredBook] = useState<string | null>(null);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
   const fullText = "Here's my past 12 months, in book form.";
-  const currentPath = usePathname();
+
 
   const fetchBooks = async () => {
     try {
@@ -54,7 +53,7 @@ export default function ReadsPage() {
         setShowContent(true);
       }
     }, 50);
-    
+
     return () => clearInterval(typewriter);
   }, []);
 
@@ -63,16 +62,16 @@ export default function ReadsPage() {
   }, []);
 
   return (
-    <PageLayout currentPath={currentPath}>
+    <>
       <h2 className="text-5xl font-bold mb-6">
         {typewriterText}
-        <motion.span 
+        <motion.span
           animate={{ opacity: [1, 0] }}
           transition={{ duration: 0.8, repeat: Infinity }}
         >|</motion.span>
       </h2>
 
-      <motion.div 
+      <motion.div
         className="mt-12"
         initial={{ opacity: 0 }}
         animate={{ opacity: showContent ? 1 : 0 }}
@@ -124,17 +123,16 @@ export default function ReadsPage() {
                     sizes="(max-width: 768px) 50vw, 33vw"
                   />
                 </div>
-                
+
                 {book.rating > 0 && (
                   <div className="flex items-center mt-1">
                     {[...Array(5)].map((_, i) => (
                       <svg
                         key={i}
-                        className={`w-4 h-4 ${
-                          i < book.rating
-                            ? 'text-yellow-400'
-                            : 'text-gray-300 dark:text-gray-600'
-                        }`}
+                        className={`w-4 h-4 ${i < book.rating
+                          ? 'text-yellow-400'
+                          : 'text-gray-300 dark:text-gray-600'
+                          }`}
                         fill="currentColor"
                         viewBox="0 0 20 20"
                       >
@@ -146,7 +144,7 @@ export default function ReadsPage() {
                 <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{book.dateRead}</p>
               </motion.a>
             ))}
-            
+
             {/* Tooltip rendered outside of individual cards */}
             <AnimatePresence>
               {hoveredBook && (
@@ -178,6 +176,6 @@ export default function ReadsPage() {
           </div>
         )}
       </motion.div>
-    </PageLayout>
+    </>
   );
 } 

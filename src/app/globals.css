@@ -1,17 +1,21 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+}
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
 }
 
 body {
@@ -21,7 +25,10 @@ body {
 }
 
 .highlight {
-  color: #d51007; /* Change to your desired highlight color */
-  font-weight: bold; /* Make it bold */
-  text-shadow: 0 0 5px rgba(255, 255, 255, 0.5); /* Optional: add a glow effect */
+  color: #d51007;
+  /* Change to your desired highlight color */
+  font-weight: bold;
+  /* Make it bold */
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+  /* Optional: add a glow effect */
 }
