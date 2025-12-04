@@ -1,4 +1,4 @@
-import { BlockObjectResponse, ParagraphBlockObjectResponse } from '@notionhq/client/build/src/api-endpoints';
+import { BlockObjectResponse, ParagraphBlockObjectResponse, RichTextItemResponse } from '@notionhq/client/build/src/api-endpoints';
 import { NotionPost } from '@/types/notion';
 
 export function isParagraphBlock(block: BlockObjectResponse): block is ParagraphBlockObjectResponse {
@@ -74,13 +74,13 @@ export function formatDate(date: string) {
 /**
  * Converts Notion rich text to markdown format
  */
-export function richTextToMarkdown(richTextArray: any[]): string {
+export function richTextToMarkdown(richTextArray: RichTextItemResponse[]): string {
   return richTextArray.map(richText => {
     let text = richText.plain_text;
 
     // Apply formatting based on annotations
     if (richText.annotations) {
-      const { bold, italic, strikethrough, underline, code } = richText.annotations;
+      const { bold, italic, strikethrough, code } = richText.annotations;
 
       if (code) {
         text = `\`${text}\``;
