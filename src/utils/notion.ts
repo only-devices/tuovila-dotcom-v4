@@ -27,7 +27,7 @@ export function isValidPost(post: unknown): post is NotionPost {
   }
 
   const props = post.properties as Record<string, unknown>;
-  
+
   // Check Title
   if (!props.Title || typeof props.Title !== 'object' || !('type' in props.Title) || props.Title.type !== 'title') {
     return false;
@@ -69,4 +69,40 @@ export function formatDate(date: string) {
     month: 'long',
     day: 'numeric'
   });
+}
+
+/**
+ * Converts Notion rich text to markdown format
+ */
+export function richTextToMarkdown(richTextArray: any[]): string {
+  return richTextArray.map(richText => {
+    let text = richText.plain_text;
+
+    // Apply formatting based on annotations
+    if (richText.annotations) {
+      const { bold, italic, strikethrough, underline, code } = richText.annotations;
+
+      if (code) {
+        text = `\`${text}\``;
+      }
+      if (bold) {
+        text = `**${text}**`;
+      }
+      if (italic) {
+        text = `*${text}*`;
+      }
+      if (strikethrough) {
+        text = `~~${text}~~`;
+      }
+      // Note: Markdown doesn't have native underline, so we'll skip it
+      // or you could use HTML <u> tags if needed
+    }
+
+    // Handle links
+    if (richText.href) {
+      text = `[${text}](${richText.href})`;
+    }
+
+    return text;
+  }).join('');
 } 
