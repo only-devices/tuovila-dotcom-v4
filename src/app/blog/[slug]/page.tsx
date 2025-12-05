@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { Quicksand } from 'next/font/google';
 import { useParams } from 'next/navigation';
 import LoadingSpinner from '@/components/LoadingSpinner';
@@ -90,6 +91,8 @@ export default function BlogPostPage() {
             {post.date}
           </p>
           <div className={`prose dark:prose-invert prose-slate max-w-none ${quicksand.className} 
+            [&>*]:quotes-none
+            prose-code:before:content-none prose-code:after:content-none
             prose-p:text-gray-700 prose-p:dark:text-gray-100
             prose-headings:text-slate-900 prose-headings:dark:text-gray-100
             prose-strong:text-gray-700 prose-strong:dark:text-gray-100
@@ -106,7 +109,7 @@ export default function BlogPostPage() {
             prose-hr:border-gray-300 prose-hr:dark:border-gray-600
             prose-th:text-gray-700 prose-th:dark:text-gray-100
             prose-td:text-gray-700 prose-td:dark:text-gray-100`}>
-            <ReactMarkdown>{post.content}</ReactMarkdown>
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.content}</ReactMarkdown>
           </div>
         </>
       ) : (

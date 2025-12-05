@@ -79,28 +79,30 @@ export function richTextToMarkdown(richTextArray: RichTextItemResponse[]): strin
     let text = richText.plain_text;
 
     // Apply formatting based on annotations
+    // Order matters: apply from innermost to outermost
     if (richText.annotations) {
       const { bold, italic, strikethrough, code } = richText.annotations;
 
+      // Code is innermost (can't be combined with other formatting)
       if (code) {
-        text = `\`${text}\``;
+        text = '`' + text + '`';
+      } else {
+        // Apply in order: strikethrough → bold → italic (innermost to outermost)
+        if (strikethrough) {
+          text = '~~' + text + '~~';
+        }
+        if (bold) {
+          text = '**' + text + '**';
+        }
+        if (italic) {
+          text = '*' + text + '*';
+        }
       }
-      if (bold) {
-        text = `**${text}**`;
-      }
-      if (italic) {
-        text = `*${text}*`;
-      }
-      if (strikethrough) {
-        text = `~~${text}~~`;
-      }
-      // Note: Markdown doesn't have native underline, so we'll skip it
-      // or you could use HTML <u> tags if needed
     }
 
-    // Handle links
+    // Handle links (outermost)
     if (richText.href) {
-      text = `[${text}](${richText.href})`;
+      text = '[' + text + '](' + richText.href + ')';
     }
 
     return text;
