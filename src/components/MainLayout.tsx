@@ -42,7 +42,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                     <div className="max-w-[1100px] mx-auto px-4 sm:px-6">
                         <motion.div
                             key={pathname}
-                            className="max-w-2xl mx-auto mt-8 sm:mt-16"
+                            className="max-w-3xl mx-auto mt-8 sm:mt-16"
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                         >
