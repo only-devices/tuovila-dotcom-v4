@@ -18,12 +18,7 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  webpack: (config) => {
-    // Suppress the punycode deprecation warning
-    config.ignoreWarnings = [
-      { module: /node_modules\/punycode/ }
-    ];
-    return config;
+  turbopack: {
   },
 };
 
