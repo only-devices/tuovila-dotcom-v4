@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { CiLight, CiDark } from 'react-icons/ci';
 import { RxHamburgerMenu } from 'react-icons/rx';
 import { IoClose } from 'react-icons/io5';
+import posthog from 'posthog-js';
 
 interface NavBarProps {
   currentPath: string;
@@ -69,7 +70,11 @@ const NavBar: React.FC<NavBarProps> = ({ currentPath, isDark, setIsDark }) => {
           ))}
           <motion.button
             className="p-2 rounded-lg hover:bg-slate-700/20 ml-2"
-            onClick={() => setIsDark(!isDark)}
+            onClick={() => {
+              const next = !isDark;
+              setIsDark(next);
+              posthog.capture('dark_mode_toggled', { is_dark: next });
+            }}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -81,7 +86,11 @@ const NavBar: React.FC<NavBarProps> = ({ currentPath, isDark, setIsDark }) => {
         <div className="flex items-center gap-2 lg:hidden">
           <motion.button
             className="p-2 rounded-lg hover:bg-slate-700/20"
-            onClick={() => setIsDark(!isDark)}
+            onClick={() => {
+              const next = !isDark;
+              setIsDark(next);
+              posthog.capture('dark_mode_toggled', { is_dark: next });
+            }}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -89,7 +98,11 @@ const NavBar: React.FC<NavBarProps> = ({ currentPath, isDark, setIsDark }) => {
           </motion.button>
           <motion.button
             className="p-2 rounded-lg hover:bg-slate-700/20"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            onClick={() => {
+              const next = !isMenuOpen;
+              setIsMenuOpen(next);
+              if (next) posthog.capture('mobile_menu_opened');
+            }}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
           >

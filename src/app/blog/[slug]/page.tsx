@@ -7,6 +7,7 @@ import remarkGfm from 'remark-gfm';
 import { Quicksand } from 'next/font/google';
 import { useParams } from 'next/navigation';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import posthog from 'posthog-js';
 
 const quicksand = Quicksand({
   subsets: ['latin'],
@@ -51,9 +52,12 @@ export default function BlogPostPage() {
 
       setPost(data.post);
       setError(null);
+      posthog.capture('blog_post_viewed', { post_title: data.post.title, post_slug: slug });
     } catch (error) {
-      setError(error instanceof Error ? error.message : 'Failed to fetch post');
+      const message = error instanceof Error ? error.message : 'Failed to fetch post';
+      setError(message);
       setPost(null);
+      posthog.captureException(error instanceof Error ? error : new Error(message), { post_slug: slug });
     } finally {
       setIsLoading(false);
     }
@@ -75,6 +79,7 @@ export default function BlogPostPage() {
           <p>Error: {error}</p>
           <button
             onClick={() => {
+              posthog.capture('blog_error_retry_clicked', { post_slug: slug });
               setIsLoading(true);
               setError(null);
               fetchPost();

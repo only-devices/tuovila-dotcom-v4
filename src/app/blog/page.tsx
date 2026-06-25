@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import posthog from 'posthog-js';
 
 interface BlogPost {
   title: string;
@@ -116,7 +117,10 @@ export default function BlogPage() {
                 whileTap={{ scale: 0.98 }}
                 onHoverStart={() => preloadPost(post.slug)}
               >
-                <Link href={`/blog/${post.slug}`}>
+                <Link
+                  href={`/blog/${post.slug}`}
+                  onClick={() => posthog.capture('blog_post_clicked', { post_title: post.title, post_slug: post.slug })}
+                >
                   <h3 className="text-2xl font-bold mb-2">{post.title}</h3>
                   <p className="text-gray-600 dark:text-gray-400 mb-4">{post.excerpt}</p>
                   <p className="text-sm text-gray-600 dark:text-gray-300">{post.date}</p>

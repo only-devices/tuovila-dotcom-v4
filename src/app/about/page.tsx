@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FaGithub, FaLinkedin, FaSoundcloud, FaBook, FaLastfm } from 'react-icons/fa';
 import { Quicksand } from 'next/font/google';
+import posthog from 'posthog-js';
 
 
 const quicksand = Quicksand({
@@ -60,25 +61,30 @@ export default function AboutPage() {
         {[
           {
             icon: FaLinkedin,
-            href: 'https://www.linkedin.com/in/etuovila'
+            href: 'https://www.linkedin.com/in/etuovila',
+            platform: 'linkedin'
           },
           {
             icon: FaGithub,
-            href: 'https://www.github.com/only-devices'
+            href: 'https://www.github.com/only-devices',
+            platform: 'github'
           },
           {
             icon: FaSoundcloud,
-            href: 'https://www.soundcloud.com/only_devices'
+            href: 'https://www.soundcloud.com/only_devices',
+            platform: 'soundcloud'
           },
           {
             icon: FaLastfm,
-            href: 'https://www.last.fm/user/only-devices'
+            href: 'https://www.last.fm/user/only-devices',
+            platform: 'lastfm'
           },
           {
             icon: FaBook,
-            href: 'https://hardcover.app/@onlydevices'
+            href: 'https://hardcover.app/@onlydevices',
+            platform: 'hardcover'
           }
-        ].map(({ icon: Icon, href }) => (
+        ].map(({ icon: Icon, href, platform }) => (
           <motion.a
             key={href}
             href={href}
@@ -87,6 +93,7 @@ export default function AboutPage() {
             className="p-4 rounded-lg flex items-center gap-3 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 transition-colors"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
+            onClick={() => posthog.capture('social_link_clicked', { platform, source: 'about' })}
           >
             <Icon size={24} className="text-slate-900 dark:text-slate-100" />
           </motion.a>

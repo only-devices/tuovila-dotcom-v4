@@ -2,11 +2,12 @@
 
 import NextError from "next/error";
 import { useEffect } from "react";
+import posthog from "posthog-js";
 
 export default function GlobalError({ error }: { error: Error & { digest?: string } }) {
   useEffect(() => {
-    // Error reporting removed
     console.error(error);
+    posthog.captureException(error);
   }, [error]);
 
   return (

@@ -4,6 +4,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaGithub, FaLinkedin, FaSoundcloud, FaBook, FaLastfm } from 'react-icons/fa';
+import posthog from 'posthog-js';
 // Quicksand font is now loaded globally in RootLayout
 // font classes are applied globally in RootLayout
 
@@ -221,33 +222,38 @@ const Tuovila = () => {
                 icon: FaLinkedin,
                 href: 'https://www.linkedin.com/in/etuovila',
                 alt: 'LinkedIn',
+                platform: 'linkedin',
                 description: 'View my professional experience and connections on LinkedIn 🤝'
               },
               {
                 icon: FaGithub,
                 href: 'https://www.github.com/only-devices',
                 alt: 'GitHub',
+                platform: 'github',
                 description: 'Check out my code and projects on GitHub 🤓'
               },
               {
                 icon: FaSoundcloud,
                 href: 'https://www.soundcloud.com/only_devices',
                 alt: 'Soundcloud',
+                platform: 'soundcloud',
                 description: 'Listen to my "music" on Soundcloud 🤘'
               },
               {
                 icon: FaLastfm,
                 href: 'https://www.last.fm/user/only-devices',
                 alt: 'Last.FM',
+                platform: 'lastfm',
                 description: 'I switch streaming platforms a lot, but track everything in Last.FM 🎧'
               },
               {
                 icon: FaBook,
                 href: 'https://hardcover.app/@onlydevices',
                 alt: 'Hardcover',
+                platform: 'hardcover',
                 description: 'I bet you didn\'t know I could read'
               }
-            ].map(({ icon: Icon, href, description: hoverDescription }) => (
+            ].map(({ icon: Icon, href, platform, description: hoverDescription }) => (
               <motion.a
                 key={href}
                 href={href}
@@ -266,6 +272,7 @@ const Tuovila = () => {
                     setDescription(remainingMessages[Math.floor(Math.random() * remainingMessages.length)]);
                   }
                 }}
+                onClick={() => posthog.capture('social_link_clicked', { platform, source: 'home' })}
               >
                 <Icon size={24} className="text-slate-900 dark:text-slate-100" />
               </motion.a>

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
+import posthog from 'posthog-js';
 
 
 interface Book {
@@ -114,6 +115,7 @@ export default function ReadsPage() {
                 className="block p-4 rounded-lg bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors shadow-lg group"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
+                onClick={() => posthog.capture('book_clicked', { book_title: book.title, book_author: book.author, book_rating: book.rating })}
                 onMouseEnter={(e) => {
                   setHoveredBook(`${book.title}-${book.dateRead}`);
                   const rect = e.currentTarget.getBoundingClientRect();
